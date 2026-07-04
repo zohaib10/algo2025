@@ -1,32 +1,53 @@
-# 242. Valid Anagram
+"""
+ Valid Anagram
 
-# Given two strings s and t, return true if t is an anagram of s, and false otherwise.
+ Given two strings s and t, return true if the two strings are anagrams of each other, otherwise return false.
 
+ An anagram is a string that contains the exact same characters as another string, but the order of the characters can be different.
 
+Example 1:
+Input: s = "racecar", t = "carrace"
+Output: true
 
-def validAnagram(s1, s2):
-    if len(s1) != len(s2):
-        return False
+Example 2:
+Input: s = "jar", t = "jam"
+Output: false
 
-    letters = [0] * 26
-    
-    for i in s1:
-        idx = ord(i) -  ord('a')
-        letters[idx] += 1
-    
-    for j in s2:
-        idx = ord(j) - ord('a')
-        letters[idx] -= 1
+Constraints:
+1 <= s.length, t.length <= 5 * 10^4
+s and t consist of lowercase English letters.
 
-    for k in letters:
-        if k != 0:
-            return False
-        
-    return True
+"""
+
+from tests.valid_anagram_test_cases import TEST_CASES
 
 
-# Example 1 -> Input: s = "anagram", t = "nagaram" -> Output: true
-assert validAnagram("anagram", "nagaram") == True
+class Solution:
+    def isAnagram(self, s1: str, s2: str) -> bool:
+        tracker = {}
+        for s in s1:
+            if s in tracker:
+                tracker[s] = tracker[s] + 1
+            else:
+                tracker[s] = 1
 
-# Example 2 -> Input: s = "rat", t = "car" -> Output: false
-assert validAnagram("rat", "car") == False
+        for s in s2:
+            if s not in tracker:
+                return False
+            elif tracker[s] > 1:
+                tracker[s] -= 1
+            else:
+                del tracker[s]
+
+        return len(tracker) == 0
+
+
+runner = Solution()
+
+for s, t, expected in TEST_CASES:
+    actual = runner.isAnagram(s, t)
+    assert (
+        actual == expected
+    ), f"Failed on s={s}, t={t}: expected {expected}, got {actual}"
+
+print("All tests passed!")
